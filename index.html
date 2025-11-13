@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>民間貸款 ERP 系統</title>
+    <!-- 載入 Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 載入 Font Awesome (圖示) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- 載入 Inter 字體 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* 基本樣式 */
+        body {
+            font-family: 'Inter', 'Noto Sans TC', sans-serif;
+            background-color: #f3f4f6;
+        }
+        /* 隱藏所有頁面，預設顯示儀表板 */
+        .page-content {
+            display: none;
+        }
+        #page-dashboard {
+            display: block;
+        }
+        /* 導覽列啟用狀態 */
+        .nav-link.active {
+            background-color: #4f46e5; /* indigo-700 */
+            color: #ffffff;
+            font-weight: 600;
+        }
+        /* 彈出視窗背景 */
+        .modal-backdrop {
+            transition: opacity 0.3s ease;
+        }
+        /* 表格樣式 */
+        th {
+            background-color: #f9fafb; /* gray-50 */
+        }
+    </style>
+</head>
+<body class="flex h-screen overflow-hidden">
+
+    <!-- 側邊導覽列 -->
+    <aside class="w-64 flex-shrink-0 bg-gray-800 text-white flex flex-col">
+        <div class="h-16 flex items-center justify-center px-4">
+            <i class="fas fa-hand-holding-dollar fa-2x mr-3"></i>
+            <span class="text-xl font-bold">貸款ERP</span>
+        </div>
+        <nav class="flex-1 overflow-y-auto">
+            <ul class="py-4 space-y-2">
+                <li>
+                    <a href="#dashboard" class="nav-link active flex items-center px-6 py-3 hover:bg-gray-700 transition duration-200">
+                        <i class="fas fa-tachometer-alt w-6 text-center mr-3"></i>
+                        <span>儀表板</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#clients" class="nav-link flex items-center px-6 py-3 hover:bg-gray-700 transition duration-200">
+                        <i class="fas fa-users w-6 text-center mr-3"></i>
+                        <span>客戶管理</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#loans" class="nav-link flex items-center px-6 py-3 hover:bg-gray-700 transition duration-200">
+                        <i class="fas fa-folder-open w-6 text-center mr-3"></i>
+                        <span>案件管理</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#payments" class="nav-link flex items-center px-6 py-3 hover:bg-gray-700 transition duration-200">
+                        <i class="fas fa-calendar-check w-6 text-center mr-3"></i>
+                        <span>還款排程</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#accounting" class="nav-link flex items-center px-6 py-3 hover:bg-gray-700 transition duration-200">
+                        <i class="fas fa-book w-6 text-center mr-3"></i>
+                        <span>簡易帳務</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        <div class="p-4 border-t border-gray-700">
+            <div class="flex items-center">
+                <div class="w-10 h-10 rounded-full bg-indigo-500 flex items-center justify-center">
+                    <span class="text-lg font-semibold">管</span>
+                </div>
+                <div class="ml-3">
+                    <p class="text-sm font-medium">管理者</p>
+                    <p class="text-xs text-gray-400">admin@erp.com</p>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- 主要內容區域 -->
+    <main class="flex-1 overflow-y-auto">
+        
+        <!-- 頁面：儀表板 -->
+        <div id="page-dashboard" class="page-content p-8">
+            <h1 class="text-3xl font-bold text-gray-800 mb-6">儀表板</h1>
+            
+            <!-- 統計數據卡片 -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white p-6 rounded-lg shadow-md border border-gray-200">
+                    <div class="flex items-center">
+                        <div class="p-3 rounded-full bg-indigo-100 text-indigo-600">
+                            <i class="fas fa-wallet fa-lg"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm text-gray-500">總放款金額</p>
+                            <p class="text-2xl font-semibold">$ 15,000,000</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md border border-gray-200">
+                    <div class="flex items-center">
+                        <div class="p-3 rounded-full bg-green-100 text-green-600">
+                            <i class="fas fa-money-bill-wave fa-lg"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm text-gray-500">待收本金</p>
+                            <p class="text-2xl font-semibold">$ 8,200,000</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md border border-gray-200">
+                    <div class="flex items-center">
+                        <div class="p-3 rounded-full bg-yellow-100 text-yellow-600">
+                            <i class="fas fa-calendar-day fa-lg"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm text-gray-500">本月應收</p>
+                            <p class="text-2xl font-semibold">$ 1,250,000</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md border border-gray-200">
+                    <div class="flex items-center">
+                        <div class="p-3 rounded-full bg-red-100 text-red-600">
+                            <i class="fas fa-exclamation-triangle fa-lg"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm text-gray-500">逾期案件</p>
+                            <p class="text-2xl font-semibold">3</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 快速操作 & 待辦事項 -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="lg:col-span-2 bg-white p-6 rounded-lg shadow-md border border-gray-200">
+                    <h2 class="text-xl font-semibold mb-4">近期還款提醒</h2>
+                    <table class="w-full text-left">
+                        <thead>
+                            <tr class="border-b">
+                                <th class="py-3 px-4">客戶</th>
+                                <th class="py-3 px-4">案件編號</th>
+                                <th class="py-3 px-4">應繳金額</th>
+                                <th class="py-3 px-4">繳款日</th>
+                                <th class="py-3 px-4">狀態</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border-b hover:bg-gray-50">
+                                <td class="py-3 px-4">王大明</td>
+                                <td class="py-3 px-4">A-1001</td>
+                                <td class="py-3 px-4">$ 50,000</td>
+                                <td class="py-3 px-4">2025-11-15</td>
+                                <td class="py-3 px-4"><span class="px-2 py-1 text-xs font-medium rounded-full bg-yellow-100 text-yellow-800">待繳</span></td>
+                            </tr>
+                            <tr class="border-b hover:bg-gray-50">
+                                <td class="py-3 px-4">陳小姐</td>
+                                <td class="py-3 px-4">A-1003</td>
+                                <td class="py-3 px-4">$ 120,000</td>
+                                <td class="py-3 px-4">2025-11-18</td>
+                                <td class="py-3 px-4"><span class="px-2 py-1 text-xs font-medium rounded-full bg-yellow-100 text-yellow-800">待繳</span></td>
+                            </tr>
+                            <tr class="hover:bg-gray-50">
+                                <td class="py-3 px-4">林先生</td>
+                                <td class="py-3 px-4">B-1002</td>
+                                <td class="py-3 px-4">$ 35,000</td>
+                                <td class="py-3 px-4">2025-11-20</td>
+                                <td class="py-3 px-4"><span class="px-2 py-1 text-xs font-medium rounded-full bg-yellow-100 text-yellow-800">待繳</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md border border-gray-200">
+                    <h2 class="text-xl font-semibold mb-4">快速操作</h2>
+                    <div class="space-y-3">
+                        <button id="btn-quick-add-client" class="w-full bg-indigo-600 text-white py-3 px-4 rounded-lg hover:bg-indigo-700 transition duration-200 flex items-center justify-center">
+                            <i class="fas fa-user-plus mr-2"></i> 新增客戶
+                        </button>
+                        <button id="btn-quick-add-loan" class="w-full bg-green-600 text-white py-3 px-4 rounded-lg hover:bg-green-700 transition duration-200 flex items-center justify-center">
+                            <i class="fas fa-file-invoice-dollar mr-2"></i> 新增案件
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 頁面：客戶管理 -->
+        <div id="page-clients" class="page-content p-8">
+            <div class="flex justify-between items-center mb-6">
+                <h1 class="text-3xl font-bold text-gray-800">客戶管理</h1>
+                <button id="btn-add-client" class="bg-indigo-600 text-white py-2 px-5 rounded-lg hover:bg-indigo-700 transition duration-200 font-semibold flex items-center">
+                    <i class="fas fa-plus mr-2"></i> 新增客戶
+                </button>
+            </div>
+            
+            <!-- 搜尋/過濾 -->
+            <div class="bg-white p-4 rounded-lg shadow-md border border-gray-200 mb-6 flex space-x-4">
+                <input type="text" placeholder="搜尋客戶 (姓名、電話、身分證...)" class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                <button class="bg-gray-600 text-white py-2 px-4 rounded-lg hover:bg-gray-700">
+                    <i class="fas fa-search"></i> 搜尋
+                </button>
+            </div>
+
+            <!-- 客戶列表 -->
+            <div class="bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
+                <table class="w-full" id="client-table-body">
+                    <thead>
+                        <tr class="border-b text-left">
+                            <th class="py-3 px-4">客戶姓名</th>
+                            <th class="py-3 px-4">電話</th>
+                            <th class="py-3 px-4">身分證字號</th>
+                            <th class="py-3 px-4">進行中案件</th>
+                            <th class="py-3 px-4">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="border-b hover:bg-gray-50">
+                            <td class="py-3 px-4 font-medium">王大明</td>
+                            <td class="py-3 px-4">0912-345-678</td>
+                            <td class="py-3 px-4">A123***789</td>
+                            <td class="py-3 px-4">2</td>
+                            <td class="py-3 px-4">
+                                <button class="text-indigo-600 hover:text-indigo-800 mr-3"><i class="fas fa-eye"></i></button>
+                                <button class="text-blue-600 hover:text-blue-800 mr-3"><i class="fas fa-edit"></i></button>
+                                <button class="text-red-600 hover:text-red-800"><i class="fas fa-trash"></i></button>
+                            </td>
+                        </tr>
+                        <tr class="border-b hover:bg-gray-50">
+                            <td class="py-3 px-4 font-medium">陳小姐</td>
+                            <td class="py-3 px-4">0922-111-333</td>
+                            <td class="py-3 px-4">F221***456</td>
+                            <td class="py-3 px-4">1</td>
+                            <td class="py-3 px-4">
+                                <button class="text-indigo-600 hover:text-indigo-800 mr-3"><i class="fas fa-eye"></i></button>
+                                <button class="text-blue-600 hover:text-blue-800 mr-3"><i class="fas fa-edit"></i></button>
+                                <button class="text-red-600 hover:text-red-800"><i class="fas fa-trash"></i></button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 頁面：案件管理 -->
+        <div id="page-loans" class="page-content p-8">
+            <div class="flex justify-between items-center mb-6">
+                <h1 class="text-3xl font-bold text-gray-800">案件管理</h1>
+                <button id="btn-add-loan" class="bg-green-600 text-white py-2 px-5 rounded-lg hover:bg-green-700 transition duration-200 font-semibold flex items-center">
+                    <i class="fas fa-plus mr-2"></i> 新增案件
+                </button>
+            </div>
+
+            <!-- 案件列表 -->
+            <div class="bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
+                <table class="w-full" id="loan-table-body">
+                    <thead>
+                        <tr class="border-b text-left">
+                            <th class="py-3 px-4">案件編號</th>
+                            <th class="py-3 px-4">客戶姓名</th>
+                            <th class="py-3 px-4">貸款金額</th>
+                            <th class="py-3 px-4">期數</th>
+                            <th class="py-3 px-4">利率(月)</th>
+                            <th class="py-3 px-4">狀態</th>
+                            <th class="py-3 px-4">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="border-b hover:bg-gray-50">
+                            <td class="py-3 px-4 font-medium">A-1001</td>
+                            <td class="py-3 px-4">王大明</td>
+                            <td class="py-3 px-4">$ 500,000</td>
+                            <td class="py-3 px-4">12</td>
+                            <td class="py-3 px-4">2.5%</td>
+                            <td class="py-3 px-4"><span class="px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800">還款中</span></td>
+                            <td class="py-3 px-4">
+                                <button class="text-indigo-600 hover:text-indigo-800 mr-3"><i class="fas fa-eye"></i></button>
+                                <button class="text-blue-600 hover:text-blue-800 mr-3"><i class="fas fa-edit"></i></button>
+                            </td>
+                        </tr>
+                        <tr class="border-b hover:bg-gray-50">
+                            <td class="py-3 px-4 font-medium">A-1002</td>
+                            <td class="py-3 px-4">王大明</td>
+                            <td class="py-3 px-4">$ 1,000,000</td>
+                            <td class="py-3 px-4">24</td>
+                            <td class="py-3 px-4">2.0%</td>
+                            <td class="py-3 px-4"><span class="px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800">還款中</span></td>
+                            <td class="py-3 px-4">
+                                <button class="text-indigo-600 hover:text-indigo-800 mr-3"><i class="fas fa-eye"></i></button>
+                                <button class="text-blue-600 hover:text-blue-800 mr-3"><i class="fas fa-edit"></i></button>
+                            </td>
+                        </tr>
+                        <tr class="border-b hover:bg-gray-50">
+                            <td class="py-3 px-4 font-medium">A-1003</td>
+                            <td class="py-3 px-4">陳小姐</td>
+                            <td class="py-3 px-4">$ 1,200,000</td>
+                            <td class="py-3 px-4">10</td>
+                            <td class="py-3 px-4">2.0%</td>
+                            <td class="py-3 px-4"><span class="px-2 py-1 text-xs font-medium rounded-full bg-red-100 text-red-800">逾期</span></td>
+                            <td class="py-3 px-4">
+                                <button class="text-indigo-600 hover:text-indigo-800 mr-3"><i class="fas fa-eye"></i></button>
+                                <button class="text-blue-600 hover:text-blue-800 mr-3"><i class="fas fa-edit"></i></button>
+                            </td>
+                        </tr>
+                        <tr class="border-b hover:bg-gray-50">
+                            <td class="py-3 px-4 font-medium">B-1001</td>
+                            <td class="py-3 px-4">張先生</td>
+                            <td class="py-3 px-4">$ 300,000</td>
+                            <td class="py-3 px-4">6</td>
+                            <td class="py-3 px-4">3.0%</td>
+                            <td class="py-3 px-4"><span class="px-2 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-800">已結清</span></td>
+                            <td class="py-3 px-4">
+                                <button class="text-indigo-600 hover:text-indigo-800 mr-3"><i class="fas fa-eye"></i></button>
+                                <button class="text-blue-600 hover:text-blue-800 mr-3"><i class="fas fa-edit"></i></button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 頁面：還款排程 -->
+        <div id="page-payments" class="page-content p-8">
+            <h1 class="text-3xl font-bold text-gray-800 mb-6">還款排程</h1>
+            <!-- 篩選器 -->
+            <div class="bg-white p-4 rounded-lg shadow-md border border-gray-200 mb-6 flex items-center space-x-4">
+                <label for="payment-date" class="font-medium">日期：</label>
+                <input type="date" id="payment-date" class="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" value="2025-11-13">
+                <label for="payment-status" class="font-medium">狀態：</label>
+                <select id="payment-status" class="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <option value="all">全部</option>
+                    <option value="pending">待繳</option>
+                    <option value="paid">已繳</option>
+                    <option value="overdue">逾期</option>
+                </select>
+                <button class="bg-gray-600 text-white py-2 px-4 rounded-lg hover:bg-gray-700">
+                    <i class="fas fa-filter"></i> 篩選
+                </button>
+            </div>
+            
+            <!-- 還款列表 -->
+            <div class="bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
+                <table class="w-full">
+                    <thead>
+                        <tr class="border-b text-left">
+                            <th class="py-3 px-4">繳款日</th>
+                            <th class="py-3 px-4">案件編號</th>
+                            <th class="py-3 px-4">客戶</th>
+                            <th class="py-3 px-4">應繳本金</th>
+                            <th class="py-3 px-4">應繳利息</th>
+                            <th class="py-3 px-4">總額</th>
+                            <th class="py-3 px-4">狀態</th>
+                            <th class="py-3 px-4">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="border-b hover:bg-gray-50">
+                            <td class="py-3 px-4">2025-11-15</td>
+                            <td class="py-3 px-4">A-1001</td>
+                            <td class="py-3 px-4">王大明</td>
+                            <td class="py-3 px-4">$ 37,500</td>
+                            <td class="py-3 px-4">$ 12,500</td>
+                            <td class="py-3 px-4 font-semibold">$ 50,000</td>
+                            <td class="py-3 px-4"><span class="px-2 py-1 text-xs font-medium rounded-full bg-yellow-100 text-yellow-800">待繳</span></td>
+                            <td class="py-3 px-4">
+                                <button class="text-green-600 hover:text-green-800">收款</button>
+                            </td>
+                        </tr>
+                        <tr class="border-b hover:bg-gray-50">
+                            <td class="py-3 px-4">2025-11-18</td>
+                            <td class="py-3 px-4">A-1003</td>
+                            <td class="py-3 px-4">陳小姐</td>
+                            <td class="py-3 px-4">$ 100,000</td>
+                            <td class="py-3 px-4">$ 20,000</td>
+                            <td class="py-3 px-4 font-semibold">$ 120,000</td>
+                            <td class="py-3 px-4"><span class="px-2 py-1 text-xs font-medium rounded-full bg-red-100 text-red-800">逾期</span></td>
+                            <td class="py-3 px-4">
+                                <button class="text-green-600 hover:text-green-800">收款</button>
+                            </td>
+                        </tr>
+                        <tr class="border-b hover:bg-gray-50">
+                            <td class="py-3 px-4">2025-11-10</td>
+                            <td class="py-3 px-4">B-1001</td>
+                            <td class="py-3 px-4">張先生</td>
+                            <td class="py-3 px-4">$ 50,000</td>
+                            <td class="py-3 px-4">$ 1,500</td>
+                            <td class="py-3 px-4 font-semibold">$ 51,500</td>
+                            <td class="py-3 px-4"><span class="px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800">已繳</span></td>
+                            <td class="py-3 px-4">
+                                <button class="text-gray-500 cursor-not-allowed">已收款</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 頁面：簡易帳務 -->
+        <div id="page-accounting" class="page-content p-8">
+            <h1 class="text-3xl font-bold text-gray-800 mb-6">簡易帳務</h1>
+            
+            <div class="bg-white p-6 rounded-lg shadow-md border border-gray-200">
+                <h2 class="text-xl font-semibold mb-4">帳務明細</h2>
+                <table class="w-full text-left">
+                    <thead>
+                        <tr class="border-b">
+                            <th class="py-3 px-4">日期</th>
+                            <th class="py-3 px-4">項目</th>
+                            <th class="py-3 px-4">收入</th>
+                            <th class="py-3 px-4">支出</th>
+                            <th class="py-3 px-4">餘額</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="border-b hover:bg-gray-50">
+                            <td class="py-3 px-4">2025-11-10</td>
+                            <td class="py-3 px-4">放款 (A-1003)</td>
+                            <td class="py-3 px-4 text-green-600">-</td>
+                            <td class="py-3 px-4 text-red-600">$ 1,200,000</td>
+                            <td class="py-3 px-4 font-medium">$ 8,800,000</td>
+                        </tr>
+                        <tr class="border-b hover:bg-gray-50">
+                            <td class="py-3 px-4">2025-11-10</td>
+                            <td class="py-3 px-4">收款 (B-1001) - 利息</td>
+                            <td class="py-3 px-4 text-green-600">$ 1,500</td>
+                            <td class="py-3 px-4 text-red-600">-</td>
+                            <td class="py-3 px-4 font-medium">$ 8,801,500</td>
+                        </tr>
+                        <tr class="border-b hover:bg-gray-50">
+                            <td class="py-3 px-4">2025-11-10</td>
+                            <td class="py-3 px-4">收款 (B-1001) - 本金</td>
+                            <td class="py-3 px-4 text-green-600">$ 50,000</td>
+                            <td class="py-3 px-4 text-red-600">-</td>
+                            <td class="py-3 px-4 font-medium">$ 8,851,500</td>
+                        </tr>
+                        <tr class="border-b hover:bg-gray-50">
+                            <td class="py-3 px-4">2025-11-01</td>
+                            <td class="py-3 px-4">辦公室租金</td>
+                            <td class="py-3 px-4 text-green-600">-</td>
+                            <td class="py-3 px-4 text-red-600">$ 30,000</td>
+                            <td class="py-3 px-4 font-medium">$ 8,821,500</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- 彈出視窗 (Modal) - 新增客戶 -->
+    <div id="modal-add-client" class="modal-backdrop fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 hidden opacity-0">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-lg">
+            <div class="flex justify-between items-center p-5 border-b">
+                <h3 class="text-xl font-semibold">新增客戶</h3>
+                <button class="modal-close-btn text-gray-500 hover:text-gray-800">
+                    <i class="fas fa-times fa-lg"></i>
+                </button>
+            </div>
+            <form id="form-add-client" class="p-6 space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="client-name" class="block text-sm font-medium mb-1">姓名</label>
+                        <input type="text" id="client-name" class="w-full px-3 py-2 border border-gray-300 rounded-lg" required>
+                    </div>
+                    <div>
+                        <label for="client-phone" class="block text-sm font-medium mb-1">聯絡電話</label>
+                        <input type="tel" id="client-phone" class="w-full px-3 py-2 border border-gray-300 rounded-lg" required>
+                    </div>
+                </div>
+                <div>
+                    <label for="client-id" class="block text-sm font-medium mb-1">身分證字號</label>
+                    <input type="text" id="client-id" class="w-full px-3 py-2 border border-gray-300 rounded-lg" required>
+                </div>
+                <div>
+                    <label for="client-address" class="block text-sm font-medium mb-1">聯絡地址</label>
+                    <input type="text" id="client-address" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                </div>
+                <div class="flex justify-end pt-4">
+                    <button type="button" class="modal-close-btn bg-gray-200 text-gray-800 py-2 px-4 rounded-lg hover:bg-gray-300 mr-3">取消</button>
+                    <button type="submit" class="bg-indigo-600 text-white py-2 px-4 rounded-lg hover:bg-indigo-700">儲存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- 彈出視窗 (Modal) - 新增案件 -->
+    <div id="modal-add-loan" class="modal-backdrop fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 hidden opacity-0">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-xl">
+            <div class="flex justify-between items-center p-5 border-b">
+                <h3 class="text-xl font-semibold">新增案件</h3>
+                <button class="modal-close-btn text-gray-500 hover:text-gray-800">
+                    <i class="fas fa-times fa-lg"></i>
+                </button>
+            </div>
+            <form id="form-add-loan" class="p-6 space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="loan-case-id" class="block text-sm font-medium mb-1">案件編號</label>
+                        <input type="text" id="loan-case-id" class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100" value="C-1001" readonly>
+                    </div>
+                    <div>
+                        <label for="loan-client" class="block text-sm font-medium mb-1">客戶姓名</label>
+                        <select id="loan-client" class="w-full px-3 py-2 border border-gray-300 rounded-lg" required>
+                            <option value="">-- 選擇客戶 --</option>
+                            <option value="王大明">王大明 (A123***789)</option>
+                            <option value="陳小姐">陳小姐 (F221***456)</option>
+                            <option value="張先生">張先生 (B111***222)</option>
+                        </select>
+                    </div>
+                </div>
+                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label for="loan-amount" class="block text-sm font-medium mb-1">貸款金額</label>
+                        <input type="number" id="loan-amount" class="w-full px-3 py-2 border border-gray-300 rounded-lg" required>
+                    </div>
+                    <div>
+                        <label for="loan-term" class="block text-sm font-medium mb-1">期數 (月)</label>
+                        <input type="number" id="loan-term" class="w-full px-3 py-2 border border-gray-300 rounded-lg" required>
+                    </div>
+                    <div>
+                        <label for="loan-rate" class="block text-sm font-medium mb-1">月利率 (%)</label>
+                        <input type="number" step="0.1" id="loan-rate" class="w-full px-3 py-2 border border-gray-300 rounded-lg" required>
+                    </div>
+                </div>
+                <div>
+                    <label for="loan-type" class="block text-sm font-medium mb-1">還款方式</label>
+                    <select id="loan-type" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                        <option value="principal-interest">本息均攤</option>
+                        <option value="interest-only">先繳息</option>
+                        <option value-"custom">自訂</option>
+                    </select>
+                </div>
+                <div class="flex justify-end pt-4">
+                    <button type="button" class="modal-close-btn bg-gray-200 text-gray-800 py-2 px-4 rounded-lg hover:bg-gray-300 mr-3">取消</button>
+                    <button type="submit" class="bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700">儲存案件</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const navLinks = document.querySelectorAll('.nav-link');
+            const pages = document.querySelectorAll('.page-content');
+            
+            // 導覽列點擊事件
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // 移除所有啟用狀態
+                    navLinks.forEach(nav => nav.classList.remove('active'));
+                    // 隱藏所有頁面
+                    pages.forEach(page => page.style.display = 'none');
+                    
+                    // 新增啟用狀態
+                    this.classList.add('active');
+                    
+                    // 顯示目標頁面
+                    const targetPageId = this.getAttribute('href').substring(1); // 移除 #
+                    const targetPage = document.getElementById('page-' + targetPageId);
+                    if (targetPage) {
+                        targetPage.style.display = 'block';
+                    }
+                });
+            });
+
+            // --- 彈出視窗 (Modal) 控制 ---
+            const addClientModal = document.getElementById('modal-add-client');
+            const addLoanModal = document.getElementById('modal-add-loan');
+            
+            const openClientModalBtns = [
+                document.getElementById('btn-add-client'),
+                document.getElementById('btn-quick-add-client')
+            ];
+            const openLoanModalBtns = [
+                document.getElementById('btn-add-loan'),
+                document.getElementById('btn-quick-add-loan')
+            ];
+            
+            const allCloseBtns = document.querySelectorAll('.modal-close-btn');
+
+            // 開啟視窗
+            function openModal(modal) {
+                if (modal) {
+                    modal.classList.remove('hidden');
+                    setTimeout(() => modal.classList.remove('opacity-0'), 10);
+                }
+            }
+            
+            // 關閉視窗
+            function closeModal(modal) {
+                if (modal) {
+                    modal.classList.add('opacity-0');
+                    setTimeout(() => modal.classList.add('hidden'), 300); // 等待 transition 動畫
+                }
+            }
+
+            openClientModalBtns.forEach(btn => btn.addEventListener('click', () => openModal(addClientModal)));
+            openLoanModalBtns.forEach(btn => btn.addEventListener('click', () => openModal(addLoanModal)));
+
+            allCloseBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    closeModal(addClientModal);
+                    closeModal(addLoanModal);
+                });
+            });
+            
+            // 點擊背景關閉
+            [addClientModal, addLoanModal].forEach(modal => {
+                if (modal) {
+                    modal.addEventListener('click', function(e) {
+                        if (e.target === this) { // 僅在點擊背景時
+                            closeModal(this);
+                        }
+                    });
+                }
+            });
+
+            // --- 模擬表單提交 ---
+
+            // 新增客戶
+            const clientForm = document.getElementById('form-add-client');
+            clientForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const name = document.getElementById('client-name').value;
+                const phone = document.getElementById('client-phone').value;
+                const id = document.getElementById('client-id').value.toUpperCase();
+                
+                const tableBody = document.getElementById('client-table-body');
+                const newRow = `
+                    <tr class="border-b hover:bg-gray-50">
+                        <td class="py-3 px-4 font-medium">${name}</td>
+                        <td class="py-3 px-4">${phone}</td>
+                        <td class="py-3 px-4">${id.substring(0, 4)}***${id.substring(7)}</td>
+                        <td class="py-3 px-4">0</td>
+                        <td class="py-3 px-4">
+                            <button class="text-indigo-600 hover:text-indigo-800 mr-3"><i class="fas fa-eye"></i></button>
+                            <button class="text-blue-600 hover:text-blue-800 mr-3"><i class="fas fa-edit"></i></button>
+                            <button class="text-red-600 hover:text-red-800"><i class="fas fa-trash"></i></button>
+                        </td>
+                    </tr>
+                `;
+                tableBody.insertAdjacentHTML('beforeend', newRow);
+                
+                // 清空表單並關閉視窗
+                clientForm.reset();
+                closeModal(addClientModal);
+                
+                // (選用) 更新新增案件表單中的客戶選項
+                const clientSelect = document.getElementById('loan-client');
+                clientSelect.insertAdjacentHTML('beforeend', `<option value="${name}">${name} (${id.substring(0, 4)}***${id.substring(7)})</option>`);
+            });
+
+            // 新增案件
+            const loanForm = document.getElementById('form-add-loan');
+            loanForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const caseId = document.getElementById('loan-case-id').value;
+                const clientName = document.getElementById('loan-client').value;
+                const amount = document.getElementById('loan-amount').value;
+                const term = document.getElementById('loan-term').value;
+                const rate = document.getElementById('loan-rate').value;
+                
+                const tableBody = document.getElementById('loan-table-body');
+                const newRow = `
+                    <tr class="border-b hover:bg-gray-50">
+                        <td class="py-3 px-4 font-medium">${caseId}</td>
+                        <td class="py-3 px-4">${clientName}</td>
+                        <td class="py-3 px-4">$ ${parseInt(amount).toLocaleString()}</td>
+                        <td class="py-3 px-4">${term}</td>
+                        <td class="py-3 px-4">${rate}%</td>
+                        <td class="py-3 px-4"><span class="px-2 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800">審核中</span></td>
+                        <td class="py-3 px-4">
+                            <button class="text-indigo-600 hover:text-indigo-800 mr-3"><i class="fas fa-eye"></i></button>
+                            <button class="text-blue-600 hover:text-blue-800 mr-3"><i class="fas fa-edit"></i></button>
+                        </td>
+                    </tr>
+                `;
+                tableBody.insertAdjacentHTML('beforeend', newRow);
+
+                // 模擬下一個案件編號
+                const nextIdNum = parseInt(caseId.split('-')[1]) + 1;
+                document.getElementById('loan-case-id').value = 'C-' + String(nextIdNum).padStart(4, '0');
+                
+                loanForm.reset();
+                closeModal(addLoanModal);
+            });
+
+        });
+    </script>
+</body>
+</html>
